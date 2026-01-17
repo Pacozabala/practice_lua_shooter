@@ -1,0 +1,26 @@
+{
+  // Use LuaJIT (what LÖVE uses internally)
+  "Lua.runtime.version": "LuaJIT",
+
+  // Tell Lua Language Server that 'love' is a global
+  "Lua.diagnostics.globals": ["love"],
+
+  // Disable annoying third-party workspace warnings
+  "Lua.workspace.checkThirdParty": false,
+
+  // Enable autocomplete and diagnostics
+  "Lua.completion.enable": true,
+  "Lua.diagnostics.enable": true,
+
+  // Optional: Load LÖVE API definitions for IntelliSense
+  // "Lua.workspace.library": ["${workspaceFolder}/love-api"],
+
+  // Performance / QoL
+  "Lua.workspace.preloadFileSize": 200
+  // "Lua.telemetry.enable": false,
+
+  // Editor formatting (Lua-friendly defaults)
+  // "editor.tabSize": 2,
+  // "editor.insertSpaces": true,
+  // "editor.detectIndentation": false
+}
