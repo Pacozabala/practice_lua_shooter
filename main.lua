@@ -1,3 +1,6 @@
+Bullet = require("entities.bullet")
+bullets = {}
+
 playerX = 0
 playerY = 0
 playerSize = 50
@@ -13,11 +16,13 @@ function love.load()
 end
 
 function love.update(dt)
-    dx, dy = get_move_input()
+    local dx, dy = get_move_input()
 
     move_player(dx, dy, dt)
 
     clamp_player()
+
+    update_bullets(dt)
 end
 
 function love.draw()
@@ -27,7 +32,11 @@ function love.draw()
     local drawY = playerY - (playerSize/2)
 
     love.graphics.rectangle("fill", drawX, drawY, playerSize, playerSize)
-    love.graphics.print("Step 3: Player Movement", 10, 10)
+    love.graphics.print("Step 4: Shooting Bullets", 10, 10)
+
+    for _, bullet in ipairs(bullets) do
+        Bullet.draw(bullet)
+    end
 end
 
 -----------------------------------------
@@ -69,4 +78,41 @@ function clamp_player()
     if playerX > width - half then playerX = width - half end
     if playerY < half then playerY = half end
     if playerY > height - half then playerY = height - half end
+end
+
+-- detect mouse click
+function love.mousepressed(x, y, button)
+    if button == 1 then
+        spawn_bullet(x, y)
+    end
+end
+
+-- calculate bullet direction and spawn
+function spawn_bullet(mouseX, mouseY)
+    local dx = mouseX - playerX
+    local dy = mouseY - playerY
+
+    local shot_vector = math.sqrt((dx*dx)+(dy*dy))
+    if length == 0 then return end
+
+    dx = dx/shot_vector
+    dy = dy/shot_vector
+
+    local bullet = Bullet.new(playerX, playerY, dx, dy)
+    table.insert(bullets, bullet)
+end
+
+-- remove offscreen bullets
+function update_bullets(dt)
+    local width, height = love.window.getMode()
+
+    for i = #bullets, 1, -1 do
+        local b = bullets[i]
+
+        Bullet.update(b, dt)
+
+        if b.x < 0 or b.x > width or b.y < 0 or b.y > height then
+            table.remove(bullets, i)
+        end
+    end
 end
