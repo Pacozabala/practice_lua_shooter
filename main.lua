@@ -93,7 +93,7 @@ function spawn_bullet(mouseX, mouseY)
     local dy = mouseY - playerY
 
     local shot_vector = math.sqrt((dx*dx)+(dy*dy))
-    if length == 0 then return end
+    if shot_vector == 0 then return end
 
     dx = dx/shot_vector
     dy = dy/shot_vector
