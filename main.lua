@@ -34,6 +34,7 @@ end
 --- FUNCTIONS TO KEEP UPDATE LOOP CLEANER 
 -----------------------------------------
 
+-- gets keyboard inputs
 function get_move_input()
     local dx, dy = 0, 0 -- movement base vectors
 
@@ -45,6 +46,7 @@ function get_move_input()
     return dx, dy
 end
 
+-- calculates movement vector and updates position
 function move_player(dx, dy, dt)
 
     -- normalize the vector
