@@ -1,33 +1,23 @@
-_G.playerX = 0
-_G.playerY = 0
-_G.playerSize = 50
-_G.playerSpeed = 200 -- pixels per second
+playerX = 0
+playerY = 0
+playerSize = 50
+playerSpeed = 300 -- pixels per second
 
 
 function love.load()
     love.graphics.setBackgroundColor(0.1,0.1,0.1)
 
     local width, height = love.window.getMode()
-    _G.playerX = width / 2
-    _G.playerY = height / 2
+    playerX = width / 2
+    playerY = height / 2
 end
 
 function love.update(dt)
-    local dx, dy = 0, 0 -- movement base vectors
+    dx, dy = get_move_input()
 
-    if love.keyboard.isDown("w") then dy = dy - 1 end
+    move_player(dx, dy, dt)
 
-    if love.keyboard.isDown("s") then dy = dy + 1 end
-
-    if love.keyboard.isDown("a") then dx = dx - 1 end
-
-    if love.keyboard.isDown("d") then dx = dx + 1 end
-
-    _G.playerX, _G.playerY = normalize_movement(dx, dy, dt)
-
-    -- clamp player to screen
-    local width, height = love.window.getMode()
-    local half = playerSize/2
+    clamp_player()
 end
 
 function love.draw()
@@ -40,17 +30,41 @@ function love.draw()
     love.graphics.print("Step 3: Player Movement", 10, 10)
 end
 
-function normalize_movement(dx, dy, dt)
-    local dx, dy, dt = dx, dy, dt
+-----------------------------------------
+--- FUNCTIONS TO KEEP UPDATE LOOP CLEANER 
+-----------------------------------------
 
+function get_move_input()
+    local dx, dy = 0, 0 -- movement base vectors
+
+    if love.keyboard.isDown("w") then dy = dy - 1 end
+    if love.keyboard.isDown("s") then dy = dy + 1 end
+    if love.keyboard.isDown("a") then dx = dx - 1 end
+    if love.keyboard.isDown("d") then dx = dx + 1 end
+
+    return dx, dy
+end
+
+function move_player(dx, dy, dt)
+
+    -- normalize the vector
     local move_vector = math.sqrt((dx*dx)+ (dy*dy))
     if move_vector > 0 then
         dx = dx/move_vector
         dy = dy/move_vector
     end
 
-    local xPos = playerX + (dx*playerSpeed*dt)
-    local yPos = playerY + (dy*playerSpeed*dt)
+    playerX = playerX + (dx*playerSpeed*dt)
+    playerY = playerY + (dy*playerSpeed*dt)
+end
 
-    return xPos, yPos
+-- clamp player to screen
+function clamp_player()
+    local width, height = love.window.getMode()
+    local half = playerSize/2
+
+    if playerX < half then playerX = half end
+    if playerX > width - half then playerX = width - half end
+    if playerY < half then playerY = half end
+    if playerY > height - half then playerY = height - half end
 end
