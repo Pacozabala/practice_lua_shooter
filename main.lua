@@ -49,7 +49,7 @@ end
 -- calculates movement vector and updates position
 function move_player(dx, dy, dt)
 
-    -- normalize the vector
+    -- normalize the vector (dot product)
     local move_vector = math.sqrt((dx*dx)+ (dy*dy))
     if move_vector > 0 then
         dx = dx/move_vector
