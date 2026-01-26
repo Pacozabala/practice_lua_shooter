@@ -1,26 +1,19 @@
+Player = require('entities.player')
 Bullet = require("entities.bullet")
 bullets = {}
-
-playerX = 0
-playerY = 0
-playerSize = 50
-playerSpeed = 300 -- pixels per second
 
 
 function love.load()
     love.graphics.setBackgroundColor(0.1,0.1,0.1)
 
     local width, height = love.window.getMode()
-    playerX = width / 2
-    playerY = height / 2
+    Player.init(width, height)
 end
 
 function love.update(dt)
     local dx, dy = get_move_input()
 
-    move_player(dx, dy, dt)
-
-    clamp_player()
+    Player.update(dx, dy, dt)
 
     update_bullets(dt)
 end
@@ -28,10 +21,8 @@ end
 function love.draw()
     -- calculate top-left position for drawing sprite
     -- coordinate - size/2
-    local drawX = playerX - (playerSize/2)
-    local drawY = playerY - (playerSize/2)
+    Player.draw()
 
-    love.graphics.rectangle("fill", drawX, drawY, playerSize, playerSize)
     love.graphics.print("Step 4: Shooting Bullets", 10, 10)
 
     for _, bullet in ipairs(bullets) do
@@ -55,31 +46,6 @@ function get_move_input()
     return dx, dy
 end
 
--- calculates movement vector and updates position
-function move_player(dx, dy, dt)
-
-    -- normalize the vector (dot product)
-    local move_vector = math.sqrt((dx*dx)+ (dy*dy))
-    if move_vector > 0 then
-        dx = dx/move_vector
-        dy = dy/move_vector
-    end
-
-    playerX = playerX + (dx*playerSpeed*dt)
-    playerY = playerY + (dy*playerSpeed*dt)
-end
-
--- clamp player to screen
-function clamp_player()
-    local width, height = love.window.getMode()
-    local half = playerSize/2
-
-    if playerX < half then playerX = half end
-    if playerX > width - half then playerX = width - half end
-    if playerY < half then playerY = half end
-    if playerY > height - half then playerY = height - half end
-end
-
 -- detect mouse click
 function love.mousepressed(x, y, button)
     if button == 1 then
@@ -89,8 +55,8 @@ end
 
 -- calculate bullet direction and spawn
 function spawn_bullet(mouseX, mouseY)
-    local dx = mouseX - playerX
-    local dy = mouseY - playerY
+    local dx = mouseX - Player.x
+    local dy = mouseY - Player.y
 
     local shot_vector = math.sqrt((dx*dx)+(dy*dy))
     if shot_vector == 0 then return end
@@ -98,7 +64,7 @@ function spawn_bullet(mouseX, mouseY)
     dx = dx/shot_vector
     dy = dy/shot_vector
 
-    local bullet = Bullet.new(playerX, playerY, dx, dy)
+    local bullet = Bullet.new(Player.x, Player.y, dx, dy)
     table.insert(bullets, bullet)
 end
 
