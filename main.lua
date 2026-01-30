@@ -2,6 +2,11 @@ Player = require('entities.player')
 Bullet = require("entities.bullet")
 bullets = {}
 
+Enemy = require("entities.enemy")
+enemies = {}
+enemySpawnTimer = 0
+enemySpawnInterval = 1.5 -- 1.5 secs
+
 
 function love.load()
     love.graphics.setBackgroundColor(0.1,0.1,0.1)
@@ -16,6 +21,14 @@ function love.update(dt)
     Player.update(dx, dy, dt)
 
     update_bullets(dt)
+
+    enemySpawnTimer = enemySpawnTimer + dt
+    if enemySpawnTimer >= enemySpawnInterval then
+        spawn_enemy()
+        enemySpawnTimer = 0
+    end
+
+    update_enemies(dt)
 end
 
 function love.draw()
@@ -23,10 +36,14 @@ function love.draw()
     -- coordinate - size/2
     Player.draw()
 
-    love.graphics.print("Step 4: Shooting Bullets", 10, 10)
+    love.graphics.print("Step 5: Enemies", 10, 10)
 
     for _, bullet in ipairs(bullets) do
         Bullet.draw(bullet)
+    end
+
+    for _, enemy in ipairs(enemies) do
+        Enemy.draw(enemy)
     end
 end
 
@@ -80,5 +97,38 @@ function update_bullets(dt)
         if b.x < 0 or b.x > width or b.y < 0 or b.y > height then
             table.remove(bullets, i)
         end
+    end
+end
+
+-- spawns enemies randomly at the side of the screen
+function spawn_enemy()
+    local width, height = love.window.getMode()
+    local side = love.math.random(1,4)
+
+    local x,y
+
+    if side == 1 then       -- top
+        x = love.math.random(0, width)
+        y = -20
+    end
+    if side == 2 then       -- bottom
+        x = love.math.random(0, width)
+        y = height + 20
+    end
+    if side == 3 then       -- left
+        x = -20
+        y = love.math.random(0, height)
+    end
+    if side == 4 then       -- right
+        x = 20
+        y = love.math.random(0, height)
+    end
+
+    table.insert(enemies, Enemy.new(x,y))
+end
+
+function update_enemies(dt)
+    for i = #enemies, 1, -1 do
+        Enemy.update(enemies[i], Player.x, Player.y, dt)
     end
 end
