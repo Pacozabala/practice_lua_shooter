@@ -1,12 +1,14 @@
-local Enemy = {
-    speed = 120,
-    radius = 18,
-}
+local Enemy = {}
+
+Enemy.speed = 120
+Enemy.radius = 18
 
 function Enemy.new(x, y)
     return {
         x = x,
-        y = y
+        y = y,
+        speed = 120,
+        radius = 18
     }
 end
 
@@ -20,12 +22,12 @@ function Enemy.update(enemy, playerX, playerY, dt)
         dy = dy/move_vector
     end
 
-    enemy.x = enemy.x + (dx*Enemy.speed*dt)
-    enemy.y = enemy.y + (dy*Enemy.speed*dt)
+    enemy.x = enemy.x + (dx*enemy.speed*dt)
+    enemy.y = enemy.y + (dy*enemy.speed*dt)
 end
 
 function Enemy.draw(enemy)
-    love.graphics.circle("fill", enemy.x, enemy.y, Enemy.radius)
+    love.graphics.circle("fill", enemy.x, enemy.y, enemy.radius)
 end
 
 return Enemy
