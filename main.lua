@@ -72,6 +72,8 @@ function love.mousepressed(x, y, button)
     end
 end
 
+-- BULLET MANAGEMENT
+
 -- calculate bullet direction and spawn
 function spawn_bullet(mouseX, mouseY)
     local dx = mouseX - Player.x
@@ -101,6 +103,8 @@ function update_bullets(dt)
         end
     end
 end
+
+-- ENEMY MANAGEMENT
 
 -- spawns enemies randomly at the side of the screen
 function spawn_enemy()
@@ -134,6 +138,8 @@ function update_enemies(dt)
         Enemy.update(enemies[i], Player.x, Player.y, dt)
     end
 end
+
+-- COLLISION MANAGEMENT
 
 function check_collision(a,b)
     -- return math.abs(a.x - b.x)*2 < (a.radius + b.radius)
