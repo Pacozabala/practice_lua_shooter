@@ -29,6 +29,8 @@ function love.update(dt)
     end
 
     update_enemies(dt)
+
+    handle_bullet_enemy_collision()
 end
 
 function love.draw()
@@ -36,7 +38,7 @@ function love.draw()
     -- coordinate - size/2
     Player.draw()
 
-    love.graphics.print("Step 5: Enemies", 10, 10)
+    love.graphics.print("Step 6a: Bullet-Enemy collision", 10, 10)
 
     for _, bullet in ipairs(bullets) do
         Bullet.draw(bullet)
@@ -120,7 +122,7 @@ function spawn_enemy()
         y = love.math.random(0, height)
     end
     if side == 4 then       -- right
-        x = 20
+        x = width + 20
         y = love.math.random(0, height)
     end
 
@@ -130,5 +132,32 @@ end
 function update_enemies(dt)
     for i = #enemies, 1, -1 do
         Enemy.update(enemies[i], Player.x, Player.y, dt)
+    end
+end
+
+function check_collision(a,b)
+    -- return math.abs(a.x - b.x)*2 < (a.radius + b.radius)
+    --     and math.abs(a.y - b.y)*2 < (a.radius + b.radius)
+
+    local dx = a.x - b.x
+    local dy = a.y - b.y
+    local distance = math.sqrt(dx*dx + dy*dy)
+
+    return distance < (a.radius + b.radius)
+end
+
+function handle_bullet_enemy_collision()
+    for i = #bullets, 1, -1 do
+        local b = bullets[i]
+
+        for j = #enemies, 1, -1 do
+            local e = enemies[j]
+
+            if check_collision(b, e) then
+                table.remove(bullets, i)
+                table.remove(enemies, j)
+                break --bullet despawns, stop checking
+            end
+        end
     end
 end
