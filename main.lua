@@ -183,9 +183,6 @@ end
 -- COLLISION MANAGEMENT
 
 function check_collision(a,b)
-    -- return math.abs(a.x - b.x)*2 < (a.size + b.size)
-    --     and math.abs(a.y - b.y)*2 < (a.size + b.size)
-
     local dx = a.x - b.x
     local dy = a.y - b.y
     local distance = math.sqrt(dx*dx + dy*dy)
