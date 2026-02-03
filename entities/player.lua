@@ -2,7 +2,7 @@ local Player = {}
 
 Player.x = 0
 Player.y = 0
-Player.radius = 50
+Player.size = 50
 Player.speed = 300
 Player.maxHealth = 100
 
@@ -32,7 +32,7 @@ end
 -- clamp player to screen
 function Player.clamp()
     local width, height = love.window.getMode()
-    local half = Player.radius/2
+    local half = Player.size/2
 
     if Player.x < half then Player.x = half end
     if Player.x > width - half then Player.x = width - half end
@@ -43,10 +43,10 @@ end
 function Player.draw()
     -- calculate top-left position for drawing sprite
     -- coordinate - size/2
-    local drawX = Player.x - (Player.radius/2)
-    local drawY = Player.y - (Player.radius/2)
+    local drawX = Player.x - (Player.size/2)
+    local drawY = Player.y - (Player.size/2)
 
-    love.graphics.rectangle("fill", drawX, drawY, Player.radius, Player.radius)
+    love.graphics.rectangle("fill", drawX, drawY, Player.size, Player.size)
 end
 
 return Player

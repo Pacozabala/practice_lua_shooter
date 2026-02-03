@@ -5,7 +5,7 @@ function Enemy.new(x, y)
         x = x,
         y = y,
         speed = 120,
-        radius = 18
+        size = 18
     }
 end
 
@@ -24,7 +24,7 @@ function Enemy.update(enemy, playerX, playerY, dt)
 end
 
 function Enemy.draw(enemy)
-    love.graphics.circle("fill", enemy.x, enemy.y, enemy.radius)
+    love.graphics.circle("fill", enemy.x, enemy.y, enemy.size)
 end
 
 return Enemy

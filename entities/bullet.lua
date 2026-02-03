@@ -7,7 +7,7 @@ function Bullet.new(x, y, dx, dy)
         dx = dx,
         dy = dy,
         speed = 500,
-        radius = 5
+        size = 5
     }
 end
 
@@ -17,7 +17,7 @@ function Bullet.update(bullet, dt)
 end
 
 function Bullet.draw(bullet)
-    love.graphics.circle("fill", bullet.x, bullet.y, bullet.radius)
+    love.graphics.circle("fill", bullet.x, bullet.y, bullet.size)
 end
 
 return Bullet
