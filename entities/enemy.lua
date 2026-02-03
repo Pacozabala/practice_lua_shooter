@@ -1,8 +1,5 @@
 local Enemy = {}
 
-Enemy.speed = 120
-Enemy.radius = 18
-
 function Enemy.new(x, y)
     return {
         x = x,
