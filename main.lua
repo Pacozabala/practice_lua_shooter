@@ -16,6 +16,8 @@ function love.load()
 end
 
 function love.update(dt)
+    if not Player.isAlive then return end
+
     local dx, dy = get_move_input()
 
     Player.update(dx, dy, dt)
@@ -31,6 +33,8 @@ function love.update(dt)
     update_enemies(dt)
 
     handle_bullet_enemy_collision()
+
+    handle_player_enemy_collision()
 end
 
 function love.draw()
@@ -38,7 +42,7 @@ function love.draw()
     -- coordinate - size/2
     Player.draw()
 
-    love.graphics.print("Step 6a: Bullet-Enemy collision", 10, 10)
+    love.graphics.print("Step 6b: Player-Enemy collision", 10, 10)
 
     for _, bullet in ipairs(bullets) do
         Bullet.draw(bullet)
@@ -46,6 +50,25 @@ function love.draw()
 
     for _, enemy in ipairs(enemies) do
         Enemy.draw(enemy)
+    end
+
+    -- health bar background
+    love.graphics.setColor(0.3, 0.3, 0.3)
+    love.graphics.rectangle("fill", 10, 30, 200, 20)
+    
+    -- health fill
+    local healthRatio = Player.health/Player.maxHealth
+    love.graphics.setColor(0.8, 0.2, 0.2)
+    love.graphics.rectangle("fill", 10, 30, 200*healthRatio, 20)
+
+    love.graphics.setColor(1,1,1)
+
+    if not Player.isAlive then
+        love.graphics.printf("GAME OVER\nPress R to restart.",
+        0,
+        love.graphics.getHeight()/2 - 20,
+        love.graphics.getWidth(),
+        "center")
     end
 end
 
@@ -70,6 +93,24 @@ function love.mousepressed(x, y, button)
     if button == 1 then
         spawn_bullet(x, y)
     end
+end
+
+function love.keypressed(key)
+    if key == "r" and not Player.isAlive then
+        restart_game()
+    end
+end
+
+function restart_game()
+    local width, height = love.window.getMode()
+
+    bullets = {}
+    enemies = {}
+    enemySpawnTimer = 0
+    Player.x = width/2
+    Player.y = height/2
+    Player.health = Player.maxHealth
+    Player.isAlive = true
 end
 
 -- BULLET MANAGEMENT
@@ -163,6 +204,24 @@ function handle_bullet_enemy_collision()
                 table.remove(bullets, i)
                 table.remove(enemies, j)
                 break --bullet despawns, stop checking
+            end
+        end
+    end
+end
+
+function handle_player_enemy_collision()
+    if not Player.isAlive then return end
+
+    for i = #enemies, 1, -1 do
+        local e = enemies[i]
+
+        if check_collision(Player, e) then
+            Player.health = Player.health - 20
+            table.remove(enemies, i)
+
+            if Player.health <= 0 then
+                Player.health = 0
+                Player.isAlive = false
             end
         end
     end
