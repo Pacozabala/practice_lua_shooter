@@ -6,6 +6,8 @@ Player.size = 50
 Player.speed = 300
 Player.maxHealth = 100
 
+Player.hitboxPadding = 8 -- inward border
+
 function Player.init(windowWidth, windowHeight)
     Player.x = windowWidth/2
     Player.y = windowHeight/2
@@ -47,6 +49,18 @@ function Player.draw()
     local drawY = Player.y - (Player.size/2)
 
     love.graphics.rectangle("fill", drawX, drawY, Player.size, Player.size)
+end
+
+function Player.getHitbox()
+    local half = Player.size / 2
+    local pad = Player.hitboxPadding
+
+    return {
+        x = Player.x - half + pad,
+        y = Player.y - half + pad,
+        w = Player.size - pad * 2,
+        h = Player.size - pad * 2
+    }
 end
 
 return Player

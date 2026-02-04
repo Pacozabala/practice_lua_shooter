@@ -38,8 +38,6 @@ function love.update(dt)
 end
 
 function love.draw()
-    -- calculate top-left position for drawing sprite
-    -- coordinate - size/2
     Player.draw()
 
     love.graphics.print("Step 6b: Player-Enemy collision", 10, 10)
@@ -182,12 +180,32 @@ end
 
 -- COLLISION MANAGEMENT
 
-function check_collision(a,b)
+function radial_collision(a,b)
     local dx = a.x - b.x
     local dy = a.y - b.y
     local distance = math.sqrt(dx*dx + dy*dy)
 
     return distance < (a.size + b.size)
+end
+
+function border_clamp(value, min, max)
+    -- clamp center to other shape's bounds
+
+    return math.max(min, math.min(value, max))
+end
+
+function rect_circle_collision(rect, circle)
+    -- use closest-point collision for rectangle-circle
+
+    -- clamp circle center to box bounds
+    local closestX = border_clamp(circle.x, rect.x, rect.x + rect.w)
+    local closestY = border_clamp(circle.y, rect.y, rect.y + rect.h)
+
+    local dx = circle.x - closestX
+    local dy = circle.y - closestY
+
+    return (dx*dx + dy*dy) < (circle.size * circle.size)
+    
 end
 
 function handle_bullet_enemy_collision()
@@ -197,7 +215,7 @@ function handle_bullet_enemy_collision()
         for j = #enemies, 1, -1 do
             local e = enemies[j]
 
-            if check_collision(b, e) then
+            if radial_collision(b, e) then
                 table.remove(bullets, i)
                 table.remove(enemies, j)
                 break --bullet despawns, stop checking
@@ -209,10 +227,12 @@ end
 function handle_player_enemy_collision()
     if not Player.isAlive then return end
 
+    local hitbox = Player.getHitbox()
+
     for i = #enemies, 1, -1 do
         local e = enemies[i]
 
-        if check_collision(Player, e) then
+        if rect_circle_collision(hitbox, e) then
             Player.health = Player.health - 20
             table.remove(enemies, i)
 
