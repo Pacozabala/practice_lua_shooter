@@ -7,6 +7,8 @@ enemies = {}
 enemySpawnTimer = 0
 enemySpawnInterval = 1.5 -- 1.5 secs
 
+Collision = require('utils.collision')
+
 
 function love.load()
     love.graphics.setBackgroundColor(0.1,0.1,0.1)
@@ -40,7 +42,7 @@ end
 function love.draw()
     Player.draw()
 
-    love.graphics.print("Step 6b: Player-Enemy collision", 10, 10)
+    love.graphics.print("Day-0 setup complete!", 10, 10)
 
     for _, bullet in ipairs(bullets) do
         Bullet.draw(bullet)
@@ -179,35 +181,6 @@ function update_enemies(dt)
 end
 
 -- COLLISION MANAGEMENT
-
-function radial_collision(a,b)
-    local dx = a.x - b.x
-    local dy = a.y - b.y
-    local distance = math.sqrt(dx*dx + dy*dy)
-
-    return distance < (a.size + b.size)
-end
-
-function border_clamp(value, min, max)
-    -- clamp center to other shape's bounds
-
-    return math.max(min, math.min(value, max))
-end
-
-function rect_circle_collision(rect, circle)
-    -- use closest-point collision for rectangle-circle
-
-    -- clamp circle center to box bounds
-    local closestX = border_clamp(circle.x, rect.x, rect.x + rect.w)
-    local closestY = border_clamp(circle.y, rect.y, rect.y + rect.h)
-
-    local dx = circle.x - closestX
-    local dy = circle.y - closestY
-
-    return (dx*dx + dy*dy) < (circle.size * circle.size)
-    
-end
-
 function handle_bullet_enemy_collision()
     for i = #bullets, 1, -1 do
         local b = bullets[i]
@@ -215,7 +188,7 @@ function handle_bullet_enemy_collision()
         for j = #enemies, 1, -1 do
             local e = enemies[j]
 
-            if radial_collision(b, e) then
+            if Collision.radial(b, e) then
                 table.remove(bullets, i)
                 table.remove(enemies, j)
                 break --bullet despawns, stop checking
@@ -232,7 +205,7 @@ function handle_player_enemy_collision()
     for i = #enemies, 1, -1 do
         local e = enemies[i]
 
-        if rect_circle_collision(hitbox, e) then
+        if Collision.rectCircle(hitbox, e) then
             Player.health = Player.health - 20
             table.remove(enemies, i)
 
