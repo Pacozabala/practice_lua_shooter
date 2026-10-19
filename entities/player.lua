@@ -1,3 +1,4 @@
+-- entities/player.lua
 local Player = {}
 
 Player.x = 0

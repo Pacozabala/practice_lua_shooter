@@ -1,3 +1,4 @@
+-- entities/bullet.lua
 local Bullet = {}
 
 function Bullet.new(x, y, dx, dy)
